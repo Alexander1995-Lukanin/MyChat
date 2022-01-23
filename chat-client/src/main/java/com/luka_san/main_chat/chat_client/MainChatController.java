@@ -51,11 +51,18 @@ public class MainChatController implements Initializable {
 
     public void sendMessage(ActionEvent actionEvent) {
         var message = inputField.getText();
+        var contact =contactList.getSelectionModel().getSelectedItems();
         if(message.isBlank()){
             return;
         }
-        mainChatArea.appendText(message+System.lineSeparator());
+        if (contact.size()!=0) {
+            mainChatArea.appendText(contact+":" + message+System.lineSeparator());
+        }
+        else {
+            mainChatArea.appendText("ALL:" + message+System.lineSeparator());
+        }
         inputField.clear();
+
 
     }
 
@@ -66,5 +73,6 @@ public class MainChatController implements Initializable {
             contacts.add("Contact#"+(i+1));
         }
         contactList.setItems(FXCollections.observableList(contacts));
+
     }
 }
