@@ -45,10 +45,36 @@ public class ClientHandler {
 
     private void handleMessage(String message) {
         var splitMessage = message.split(Server.REGEX);
-        switch (splitMessage[0]) {
-            case "/broadcast":
-                server.broadcastMessage(user, splitMessage[1]);
-                break;
+        try {
+            switch (splitMessage[0]) {
+                case "/w":
+                    server.privateMessage(this.user, splitMessage[1], splitMessage[2], this);
+                    break;
+                case "/broadcast":
+                    server.broadcastMessage(user, splitMessage[1]);
+                    break;
+                case "/change_nick":
+                    String nick = server.getAuthService().changeNick(this.user, splitMessage[1]);
+                    server.removeAuthorizedClientToList(this);
+                    this.user = nick;
+                    server.addAuthorizedClientToList(this);
+                    send("/change_nick_ok");
+                    break;
+                case "/change_pass":
+                    server.getAuthService().changePassword(this.user, splitMessage[1], splitMessage[2]);
+                    send("/change_pass_ok");
+                    break;
+                case "/remove":
+                    server.getAuthService().deleteUser(splitMessage[1], splitMessage[2]);
+                    this.socket.close();
+                    break;
+                case "/register":
+                    server.getAuthService().createNewUser(splitMessage[1], splitMessage[2], splitMessage[3]);
+                    send("register_ok:");
+                    break;
+            }
+        } catch (IOException e) {
+            send("/error" + Server.REGEX + e.getMessage());
         }
     }
 
@@ -103,4 +129,5 @@ public class ClientHandler {
     public String getUserNick() {
         return this.user;
     }
+
 }

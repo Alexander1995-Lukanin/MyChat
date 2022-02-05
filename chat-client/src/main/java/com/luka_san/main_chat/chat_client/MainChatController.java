@@ -60,9 +60,13 @@ public class MainChatController implements Initializable, MessageProcessor {
         if (message.isBlank()) {
             return;
         }
-//        var recipient = contactList.getSelectionModel().getSelectedItem();
-//        mainChatArea.appendText(recipient + ": " + message + System.lineSeparator());
-        networkService.sendMessage("/broadcast" + REGEX  + message);
+        var recipient = contactList.getSelectionModel().getSelectedItems();
+        if (!recipient.equals("ALL")){
+            networkService.sendMessage("/w"+REGEX+recipient+REGEX+message);
+        }
+        else {
+            networkService.sendMessage("/broadcast"+REGEX+message);
+        }
         inputField.clear();
     }
 

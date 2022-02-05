@@ -39,7 +39,7 @@ public class Server {
         }
     }
 
-    public void privateMessage(String from, String message) {
+    public void privateMessage(String user, String from, String message, ClientHandler clientHandler) {
 
     }
 
