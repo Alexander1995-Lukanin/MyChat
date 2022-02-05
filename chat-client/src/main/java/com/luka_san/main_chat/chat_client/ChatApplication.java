@@ -18,6 +18,7 @@ launch(args);
         Parent parent = loader.load();
         Scene scene = new Scene(parent);
         primaryStage.setScene(scene);
+        primaryStage.setTitle("January Chat");
         primaryStage.show();
     }
 }
