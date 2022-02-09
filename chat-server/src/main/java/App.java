@@ -1,5 +1,4 @@
-
-import autch.InMemoryAuthService;
+import auth.InMemoryAuthService;
 import server.Server;
 
 public class App {

@@ -1,5 +1,6 @@
 package com.luka_san.main_chat.chat_client.network;
 
+import ru.geekbrains.january_chat.props.PropertyReader;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -7,19 +8,21 @@ import java.io.IOException;
 import java.net.Socket;
 
 public class NetworkService {
-    private static final String HOST = "127.0.0.1";
-    private static final int PORT = 8189;
+    private final String host;
+    private final int port;
     private Socket socket;
     private DataInputStream in;
     private DataOutputStream out;
     private MessageProcessor messageProcessor;
 
-    public NetworkService(MessageProcessor messageProcessor)  {
+    public NetworkService(MessageProcessor messageProcessor) {
+        host = PropertyReader.getInstance().getHost();
+        port = PropertyReader.getInstance().getPort();
         this.messageProcessor = messageProcessor;
     }
 
     public void connect() throws IOException {
-        this.socket = new Socket(HOST, PORT);
+        this.socket = new Socket(host, port);
         this.in = new DataInputStream(socket.getInputStream());
         this.out = new DataOutputStream(socket.getOutputStream());
         readMessages();

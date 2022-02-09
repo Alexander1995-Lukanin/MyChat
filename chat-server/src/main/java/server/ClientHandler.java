@@ -1,7 +1,6 @@
-package error;
+package server;
 
 import error.WrongCredentialsException;
-import server.Server;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -22,21 +21,23 @@ public class ClientHandler {
             this.socket = socket;
             this.in = new DataInputStream(socket.getInputStream());
             this.out = new DataOutputStream(socket.getOutputStream());
+//            out.write("hello world".getBytes(StandardCharsets.UTF_8));
             System.out.println("Handler created");
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Connection broken with user " + user);
         }
     }
 
     public void handle() {
         handlerThread = new Thread(() -> {
             authorize();
-            while (!Thread.currentThread().isInterrupted() && socket.isConnected()) {
+            while (!Thread.currentThread().isInterrupted() && !socket.isClosed()) {
                 try {
                     var message = in.readUTF();
                     handleMessage(message);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    System.out.println("Connection broken with user " + user);
+                    server.removeAuthorizedClientFromList(this);
                 }
             }
         });
@@ -45,10 +46,36 @@ public class ClientHandler {
 
     private void handleMessage(String message) {
         var splitMessage = message.split(Server.REGEX);
-        switch (splitMessage[0]) {
-            case "/broadcast":
-                server.broadcastMessage(user, splitMessage[1]);
-                break;
+        try {
+            switch (splitMessage[0]) {
+                case "/w":
+                    server.privateMessage(this.user, splitMessage[1], splitMessage[2], this);
+                    break;
+                case "/broadcast":
+                    server.broadcastMessage(user, splitMessage[1]);
+                    break;
+                case "/change_nick":
+                    String nick = server.getAuthService().changeNick(this.user, splitMessage[1]);
+                    server.removeAuthorizedClientFromList(this);
+                    this.user = nick;
+                    server.addAuthorizedClientToList(this);
+                    send("/change_nick_ok");
+                    break;
+                case "/change_pass":
+                    server.getAuthService().changePassword(this.user, splitMessage[1], splitMessage[2]);
+                    send("/change_pass_ok");
+                    break;
+                case "/remove":
+                    server.getAuthService().deleteUser(splitMessage[1], splitMessage[2]);
+                    this.socket.close();
+                    break;
+                case "/register":
+                    server.getAuthService().createNewUser(splitMessage[1], splitMessage[2], splitMessage[3]);
+                    send("register_ok:");
+                    break;
+            }
+        } catch (IOException e) {
+            send("/error" + Server.REGEX + e.getMessage());
         }
     }
 
