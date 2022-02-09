@@ -1,21 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
 <?import javafx.geometry.Insets?>
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.luka_san.main_chat.chat_client.MainChatController"
-            prefHeight="400.0" prefWidth="600.0">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.luka_san.main_chat.chat_client.MainChatController">
+    <VBox visible="false" fx:id="changeNickPanel">
+
+        <HBox VBox.vgrow="ALWAYS">
+            <VBox>
+                <Label text="Please enter your new nickname:"/>
+                <TextField fx:id="newNickField" onAction="#sendChangeNick"/>
+            </VBox>
+        </HBox>
+        <Button text="SEND" onAction="#sendChangeNick"/>
+        <Button text="RETURN" onAction="#returnToChat"/>
+    </VBox>
+    <VBox visible="false" fx:id="changePasswordPanel">
+
+        <HBox VBox.vgrow="ALWAYS">
+            <VBox>
+                <Label text="Please enter your old password:"/>
+                <PasswordField fx:id="oldPassField" onAction="#sendChangePass"/>
+            </VBox>
+            <VBox>
+                <Label text="Please enter your new password:"/>
+                <PasswordField fx:id="newPasswordField" onAction="#sendChangePass"/>
+            </VBox>
+        </HBox>
+        <Button text="SEND" onAction="#sendChangePass"/>
+        <Button text="RETURN" onAction="#returnToChat"/>
+    </VBox>
     <VBox fx:id="loginPanel">
         <Label text="Login: "/>
         <TextField fx:id="loginField"/>
         <Label text="Password: "/>
-        <PasswordField fx:id="passwordField"/>
+        <PasswordField fx:id="passwordField" onAction="#sendAuth"/>
         <Button text="connect" onAction="#sendAuth"/>
     </VBox>
     <VBox fx:id="mainChatPanel" visible="false">
@@ -71,11 +93,12 @@
                     <Insets left="5.0" right="5.0"/>
                 </HBox.margin>
             </TextField>
-            <Button fx:id="btnSend" minWidth="125.0" text="SEND" prefHeight="70.0" onAction="#sendMessage">
+            <Button fx:id="btnSend" minWidth="125.0" text="SEND" prefHeight="70.0" onAction="#sendMessage" >
                 <HBox.margin>
                     <Insets left="5.0" right="5.0"/>
                 </HBox.margin>
             </Button>
         </HBox>
     </VBox>
+
 </AnchorPane>

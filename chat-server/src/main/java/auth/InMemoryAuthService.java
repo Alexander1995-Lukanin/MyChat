@@ -1,4 +1,4 @@
-package autch;
+package auth;
 
 import entity.User;
 import error.WrongCredentialsException;
