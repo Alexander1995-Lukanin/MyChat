@@ -1,12 +1,10 @@
 package server;
 
 import auth.AuthService;
-import error.WrongCredentialsException;
 import ru.geekbrains.january_chat.props.PropertyReader;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,16 +29,8 @@ public class Server {
                 System.out.println("Client connected");
                 var clientHandler = new ClientHandler(socket, this);
                 clientHandler.handle();
-                       if    (authService.start()) {
-                           Thread.sleep(12000);
-                           authService.stop();
-                           removeAuthorizedClientFromList(clientHandler);
-                           socket.isClosed();
-                           System.out.println("Client disconnected");
-                       }
-                       break;
             }
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         } finally {
             authService.stop();
@@ -114,5 +104,4 @@ public class Server {
         }
         return null;
     }
-
 }

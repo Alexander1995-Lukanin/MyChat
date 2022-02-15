@@ -1,13 +1,17 @@
 package server;
 
 import error.WrongCredentialsException;
+import ru.geekbrains.january_chat.props.PropertyReader;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ClientHandler {
+    private final long authTimeout;
     private Socket socket;
     private DataOutputStream out;
     private DataInputStream in;
@@ -15,7 +19,9 @@ public class ClientHandler {
     private Server server;
     private String user;
 
+
     public ClientHandler(Socket socket, Server server) {
+        authTimeout = PropertyReader.getInstance().getAuthTimeout();
         try {
             this.server = server;
             this.socket = socket;
@@ -81,8 +87,24 @@ public class ClientHandler {
 
     private void authorize() {
         System.out.println("Authorizing");
-        while (true) {
-            try {
+        var timer = new Timer(true);
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    if (user == null) {
+                        send("/error" + Server.REGEX + "Authentication timeout!\nPlease, try again later!");
+                        Thread.sleep(50);
+                        socket.close();
+                        System.out.println("Connection with client closed");
+                    }
+                } catch (InterruptedException | IOException e) {
+                    e.getStackTrace();
+                }
+            }
+        }, authTimeout);
+        try {
+            while (true) {
                 var message = in.readUTF();
                 if (message.startsWith("/auth")) {
                     var parsedAuthMessage = message.split(Server.REGEX);
@@ -94,7 +116,6 @@ public class ClientHandler {
                         response = "/error" + Server.REGEX + e.getMessage();
                         System.out.println("Wrong credentials, nick " + parsedAuthMessage[1]);
                     }
-
                     if (server.isNickBusy(nickname)) {
                         response = "/error" + Server.REGEX + "this client already connected";
                         System.out.println("Nick busy " + nickname);
@@ -109,9 +130,9 @@ public class ClientHandler {
                     }
 
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
