@@ -3,8 +3,8 @@ package auth;
 import entity.User;
 
 public interface AuthService {
-    void start();
-    void stop();
+    boolean start();
+    boolean stop();
     String authorizeUserByLoginAndPassword(String login, String password);
     String changeNick(String login, String newNick);
     User createNewUser(String login, String password, String nick);

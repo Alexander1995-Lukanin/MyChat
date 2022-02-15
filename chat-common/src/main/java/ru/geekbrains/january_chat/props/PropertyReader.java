@@ -7,6 +7,7 @@ public class PropertyReader {
     private static PropertyReader instance;
     private String host;
     private int port;
+    private long authTimeout;
 
     private PropertyReader() {
         getPropValues();
@@ -29,15 +30,19 @@ public class PropertyReader {
 
             host = properties.getProperty("host");
             port = Integer.parseInt(properties.getProperty("port"));
+            authTimeout = Long.parseLong(properties.getProperty("auth.timeout"));
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+    public long getAuthTimeout() {
+        return authTimeout;}
 
     public String getHost() {
         return host;
     }
+
 
     public int getPort() {
         return port;
