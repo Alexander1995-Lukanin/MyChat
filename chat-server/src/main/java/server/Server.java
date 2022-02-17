@@ -93,6 +93,7 @@ public class Server {
     }
 
     public AuthService getAuthService() {
+
         return authService;
     }
 
