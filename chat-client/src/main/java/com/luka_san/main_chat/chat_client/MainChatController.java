@@ -135,8 +135,8 @@ public class MainChatController implements Initializable, MessageProcessor {
     }
 
     public void sendChangeNick(ActionEvent actionEvent) {
-        if (newNickField.getText().isBlank()) return;
-        networkService.sendMessage("/change_nick" + REGEX + newNickField.getText());
+        if (newNickField.getText().isBlank()) return ;
+            networkService.sendMessage("/change_nick" + REGEX + newNickField.getText());
     }
 
     public void sendChangePass(ActionEvent actionEvent) {

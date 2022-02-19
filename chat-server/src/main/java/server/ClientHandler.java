@@ -7,6 +7,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -80,7 +81,7 @@ public class ClientHandler {
                     send("register_ok:");
                     break;
             }
-        } catch (IOException e) {
+        } catch (IOException | SQLException e) {
             send("/error" + Server.REGEX + e.getMessage());
         }
     }
@@ -115,6 +116,8 @@ public class ClientHandler {
                     } catch (WrongCredentialsException e) {
                         response = "/error" + Server.REGEX + e.getMessage();
                         System.out.println("Wrong credentials, nick " + parsedAuthMessage[1]);
+                    } catch (SQLException throwables) {
+                        throwables.printStackTrace();
                     }
                     if (server.isNickBusy(nickname)) {
                         response = "/error" + Server.REGEX + "this client already connected";
