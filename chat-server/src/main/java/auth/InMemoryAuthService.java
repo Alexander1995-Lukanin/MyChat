@@ -22,15 +22,15 @@ public class InMemoryAuthService implements AuthService {
     }
 
     @Override
-    public boolean start() {
+    public void start() {
         System.out.println("Auth service started");
-        return true;
+
     }
 
     @Override
-    public boolean stop() {
+    public void stop() {
         System.out.println("Auth service stopped");
-        return true;
+
     }
 
     @Override

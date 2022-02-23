@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.Timer;
 import java.util.TimerTask;
 
+
 public class ClientHandler {
     private final long authTimeout;
     private Socket socket;
@@ -19,7 +20,6 @@ public class ClientHandler {
     private Thread handlerThread;
     private Server server;
     private String user;
-
 
     public ClientHandler(Socket socket, Server server) {
         authTimeout = PropertyReader.getInstance().getAuthTimeout();
@@ -80,7 +80,7 @@ public class ClientHandler {
                     send("register_ok:");
                     break;
             }
-        } catch (IOException | SQLException e) {
+        } catch (IOException e) {
             send("/error" + Server.REGEX + e.getMessage());
         }
     }
@@ -104,7 +104,7 @@ public class ClientHandler {
             }
         }, authTimeout);
         try {
-            while (true) {
+            while (!socket.isClosed()) {
                 var message = in.readUTF();
                 if (message.startsWith("/auth")) {
                     var parsedAuthMessage = message.split(Server.REGEX);
@@ -115,9 +115,8 @@ public class ClientHandler {
                     } catch (WrongCredentialsException e) {
                         response = "/error" + Server.REGEX + e.getMessage();
                         System.out.println("Wrong credentials, nick " + parsedAuthMessage[1]);
-                    } catch (SQLException throwables) {
-                        throwables.printStackTrace();
                     }
+
                     if (server.isNickBusy(nickname)) {
                         response = "/error" + Server.REGEX + "this client already connected";
                         System.out.println("Nick busy " + nickname);
