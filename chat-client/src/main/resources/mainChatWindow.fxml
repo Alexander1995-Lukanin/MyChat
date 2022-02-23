@@ -7,7 +7,17 @@
 <?import javafx.geometry.Insets?>
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.luka_san.main_chat.chat_client.MainChatController">
+    <VBox visible="false" fx:id="changeNickPanel">
 
+        <HBox VBox.vgrow="ALWAYS">
+            <VBox>
+                <Label text="Please enter your new nickname:"/>
+                <TextField fx:id="newNickField" onAction="#sendChangeNick"/>
+            </VBox>
+        </HBox>
+        <Button text="SEND" onAction="#sendChangeNick"/>
+        <Button text="RETURN" onAction="#returnToChat"/>
+    </VBox>
     <VBox visible="false" fx:id="changePasswordPanel">
 
         <HBox VBox.vgrow="ALWAYS">
@@ -31,17 +41,6 @@
         <Button text="connect" onAction="#sendAuth"/>
     </VBox>
     <VBox fx:id="mainChatPanel" visible="false">
-        <VBox visible="true" fx:id="changeNickPanel">
-
-            <HBox VBox.vgrow="ALWAYS">
-                <VBox>
-                    <Label text="Please enter your new nickname:"/>
-                    <TextField fx:id="newNickField" onAction="#sendChangeNick"/>
-                </VBox>
-            </HBox>
-            <Button text="SEND" onAction="#sendChangeNick"/>
-            <Button text="RETURN" onAction="#returnToChat"/>
-        </VBox>
         <MenuBar>
             <Menu text="File">
                 <MenuItem text="Connect" onAction="#connectToServer"/>

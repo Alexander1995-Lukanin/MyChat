@@ -1,12 +1,11 @@
-import DatabaseChat.Database;
-import auth.SQLAuthService;
+import auth.DatabaseAuthService;
 import server.Server;
 
 
 
 public class App {
     public static void main(String[] args) {
-        new Server(new SQLAuthService()).start();
+        new Server(new DatabaseAuthService()).start();
 
 
     }
