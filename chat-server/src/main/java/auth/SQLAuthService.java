@@ -1,17 +1,18 @@
 package auth;
 
+import DatabaseChat.Database;
 import entity.User;
 import error.WrongCredentialsException;
 
 import java.sql.SQLException;
 
-import static DatabaseChat.Database.AuthRead;
-import static DatabaseChat.Database.preparedStatementExample;
 
-public class SQLAuthService implements AuthService{
+public class SQLAuthService implements AuthService {
+    private Database dbservice;
 
     @Override
     public boolean start() {
+        dbservice = Database.getInstance();
         System.out.println("Auth service started");
         return true;
     }
@@ -19,21 +20,21 @@ public class SQLAuthService implements AuthService{
 
     @Override
     public boolean stop() {
+        dbservice.closeConnection();
         System.out.println("Auth service stopped");
         return true;
     }
 
 
-
     @Override
-    public String authorizeUserByLoginAndPassword(String login, String password) throws SQLException {
-        return AuthRead (login,password);
+    public String authorizeUserByLoginAndPassword(String login, String pass) {
+        return dbservice.getClientNameByLoginPass(login, pass);
     }
 
 
     @Override
     public String changeNick(String login, String newNick) throws SQLException {
-        return  preparedStatementExample(login, newNick);
+        return dbservice.changeUsername(login, newNick);
     }
 
     @Override
