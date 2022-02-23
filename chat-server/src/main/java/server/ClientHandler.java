@@ -7,9 +7,10 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.sql.SQLException;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 public class ClientHandler {
@@ -17,9 +18,9 @@ public class ClientHandler {
     private Socket socket;
     private DataOutputStream out;
     private DataInputStream in;
-    private Thread handlerThread;
     private Server server;
     private String user;
+    ExecutorService service = Executors.newFixedThreadPool(100);
 
     public ClientHandler(Socket socket, Server server) {
         authTimeout = PropertyReader.getInstance().getAuthTimeout();
@@ -35,7 +36,7 @@ public class ClientHandler {
     }
 
     public void handle() {
-        handlerThread = new Thread(() -> {
+       service.execute(() -> {
             authorize();
             while (!Thread.currentThread().isInterrupted() && !socket.isClosed()) {
                 try {
@@ -47,7 +48,8 @@ public class ClientHandler {
                 }
             }
         });
-        handlerThread.start();
+        service.shutdown();
+
     }
 
     private void handleMessage(String message) {
@@ -145,8 +147,8 @@ public class ClientHandler {
         }
     }
 
-    public Thread getHandlerThread() {
-        return handlerThread;
+    public ExecutorService getHandlerThread() {
+        return service;
     }
 
     public String getUserNick() {
