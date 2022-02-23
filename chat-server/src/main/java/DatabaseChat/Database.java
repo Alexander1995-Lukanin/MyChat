@@ -12,7 +12,7 @@ public class Database {
     private static final String CHANGE_USERNAME = "update clients set username = ? where login = ?;";
     private static final String CREATE_DB = "create table if not exists clients (id integer primary key autoincrement)" +
             " login text unique not null, password text not null, username text unique not null);";
-    private static final String INIT_DB = "insert into clients (login, password, username) values ('log1','pass1','user1'), " +
+    private static final String INIT_DB = "insert into clients (login, password, username) values ('log1','pass1','user1')" +
             "('log2','pass2','user2'), ('log2','pass2','user2');";
     private static Database instance;
     private Connection connection;
@@ -21,12 +21,13 @@ public class Database {
 
 
     public Database() {
+
         try {
             connect();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
-        createDb();
+
     }
 
     public static Database getInstance() {
@@ -63,7 +64,7 @@ public class Database {
         throw new WrongCredentialsException("User not found");
     }
 
-    private void createDb() {
+    public void createDb() {
         try (Statement st = connection.createStatement()) {
             st.execute(CREATE_DB);
             st.execute(INIT_DB);
@@ -72,7 +73,7 @@ public class Database {
         }
     }
 
-    private void connect() throws ClassNotFoundException, SQLException {
+    public  void connect() throws ClassNotFoundException, SQLException {
         Class.forName(DRIVER);
         connection = DriverManager.getConnection(CONNECTION);
         System.out.println("Connected to db");

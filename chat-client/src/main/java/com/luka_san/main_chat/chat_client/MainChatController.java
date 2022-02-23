@@ -10,8 +10,11 @@ import javafx.scene.layout.VBox;
 import com.luka_san.main_chat.chat_client.network.MessageProcessor;
 import com.luka_san.main_chat.chat_client.network.NetworkService;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
@@ -110,6 +113,14 @@ public class MainChatController implements Initializable, MessageProcessor {
                 this.nick = splitMessage[1];
                 loginPanel.setVisible(false);
                 mainChatPanel.setVisible(true);
+//                var file = new File("recording_messages/%s\n.txt",this.nick);
+//                if (!file.exists()){
+//                }
+//                try (var fos = new FileOutputStream("recording_messages/%s\n.txt", Boolean.parseBoolean(this.nick))){
+//                fos.write(message.getBytes(StandardCharsets.UTF_8));
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
                 break;
             case "/error":
                 showError(splitMessage[1]);

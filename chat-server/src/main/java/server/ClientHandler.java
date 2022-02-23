@@ -28,7 +28,6 @@ public class ClientHandler {
             this.socket = socket;
             this.in = new DataInputStream(socket.getInputStream());
             this.out = new DataOutputStream(socket.getOutputStream());
-//            out.write("hello world".getBytes(StandardCharsets.UTF_8));
             System.out.println("Handler created");
         } catch (IOException e) {
             System.out.println("Connection broken with user " + user);
