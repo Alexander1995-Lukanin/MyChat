@@ -2,7 +2,6 @@ package auth;
 
 import DatabaseChat.Database;
 import entity.User;
-import error.WrongCredentialsException;
 
 import java.sql.SQLException;
 
@@ -12,6 +11,7 @@ public class SQLAuthService implements AuthService {
 
     @Override
     public boolean start() {
+        dbservice.createDb();
         dbservice = Database.getInstance();
         System.out.println("Auth service started");
         return true;

@@ -46,6 +46,7 @@ public class NetworkService {
     public void sendMessage(String message) {
         try {
             out.writeUTF(message);
+            
         } catch (IOException e) {
             e.printStackTrace();
         }
