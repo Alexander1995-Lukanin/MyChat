@@ -1,53 +1,57 @@
 package server;
 
 import error.WrongCredentialsException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ru.geekbrains.january_chat.props.PropertyReader;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.sql.SQLException;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 public class ClientHandler {
+    private static final Logger logClient = LogManager.getLogger();
     private final long authTimeout;
     private Socket socket;
     private DataOutputStream out;
     private DataInputStream in;
-    private Thread handlerThread;
     private Server server;
     private String user;
 
     public ClientHandler(Socket socket, Server server) {
+
         authTimeout = PropertyReader.getInstance().getAuthTimeout();
         try {
             this.server = server;
             this.socket = socket;
             this.in = new DataInputStream(socket.getInputStream());
             this.out = new DataOutputStream(socket.getOutputStream());
-            System.out.println("Handler created");
+            logClient.info("Handler created");
         } catch (IOException e) {
-            System.out.println("Connection broken with user " + user);
+            logClient.info("Connection broken with user " + user);
         }
     }
 
     public void handle() {
-        handlerThread = new Thread(() -> {
+        server.getExecutorService().execute(() -> {
             authorize();
             while (!Thread.currentThread().isInterrupted() && !socket.isClosed()) {
                 try {
                     var message = in.readUTF();
                     handleMessage(message);
                 } catch (IOException e) {
-                    System.out.println("Connection broken with user " + user);
+                    logClient.info("Connection broken with user " + user);
                     server.removeAuthorizedClientFromList(this);
                 }
             }
         });
-        handlerThread.start();
+
     }
 
     private void handleMessage(String message) {
@@ -86,7 +90,7 @@ public class ClientHandler {
     }
 
     private void authorize() {
-        System.out.println("Authorizing");
+        logClient.info("Authorizing");
         var timer = new Timer(true);
         timer.schedule(new TimerTask() {
             @Override
@@ -143,10 +147,6 @@ public class ClientHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public Thread getHandlerThread() {
-        return handlerThread;
     }
 
     public String getUserNick() {

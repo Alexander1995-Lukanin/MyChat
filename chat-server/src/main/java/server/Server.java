@@ -1,33 +1,40 @@
 package server;
 
 import auth.AuthService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ru.geekbrains.january_chat.props.PropertyReader;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Server {
+    private static final Logger log = LogManager.getLogger();
     public static final String REGEX = "%!%";
     private final int port;
     private final AuthService authService;
     private final List<ClientHandler> clientHandlers;
+    private final ExecutorService executorService;
 
     public Server(AuthService authService) {
         port = PropertyReader.getInstance().getPort();
         this.clientHandlers = new ArrayList<>();
         this.authService = authService;
+        this.executorService = Executors.newCachedThreadPool();
     }
 
     public void start() {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
-            System.out.println("Server start!");
+            log.info("Server start!");
             authService.start();
             while (true) {
-                System.out.println("Waiting for connection......");
+               log.info("Waiting for connection......");
                 var socket = serverSocket.accept();
-                System.out.println("Client connected");
+                log.info("Client connected");
                 var clientHandler = new ClientHandler(socket, this);
                 clientHandler.handle();
             }
@@ -90,6 +97,8 @@ public class Server {
     }
 
     private void shutdown() {
+        authService.stop();
+        executorService.shutdownNow();
 
     }
 
@@ -97,6 +106,9 @@ public class Server {
         return authService;
     }
 
+    public ExecutorService getExecutorService() {
+        return executorService;
+    }
     private ClientHandler getHandlerByUser(String username) {
         for (ClientHandler clientHandler : clientHandlers) {
             if (clientHandler.getUserNick().equals(username)) {
