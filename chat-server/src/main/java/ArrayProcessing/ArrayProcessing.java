@@ -1,7 +1,7 @@
 package ArrayProcessing;
 
 import java.util.Arrays;
-
+//HM-6
 public class ArrayProcessing {
 
         public static int[] sliceArray(int[] arr) {
@@ -14,21 +14,16 @@ public class ArrayProcessing {
         }
 
         public static boolean hasOneAndFour(int[] arr) {
-            boolean has1 = false;
-            boolean has4 = false;
+            boolean has = false;
 
             for (int i = 0; i < arr.length; i++) {
-                if (arr[i] == 1) {
-                    has1 = true;
+                if (arr[i] == 1 || arr[i] == 4) {
+                    has=true;
+                    break;
                 }
-                else if(arr[i] == 4) {
-                    has4 = true;
-                }
-                else {
-                    return false;
-                }
+                else continue;
             }
-            return has1 && has4;
+             return has;
         }
 }
 

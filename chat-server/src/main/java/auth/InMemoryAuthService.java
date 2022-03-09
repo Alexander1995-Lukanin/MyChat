@@ -1,13 +1,16 @@
 package auth;
 
+import DatabaseChat.ClientsDatabaseService;
 import entity.User;
 import error.WrongCredentialsException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class InMemoryAuthService implements AuthService {
-
+    private static final Logger logAuthService = LogManager.getLogger(InMemoryAuthService.class);
     private List<User> users;
 
     public InMemoryAuthService() {
@@ -23,13 +26,13 @@ public class InMemoryAuthService implements AuthService {
 
     @Override
     public void start() {
-        System.out.println("Auth service started");
+        logAuthService.info("Auth service started");
 
     }
 
     @Override
     public void stop() {
-        System.out.println("Auth service stopped");
+        logAuthService.info("Auth service stopped");
 
     }
 

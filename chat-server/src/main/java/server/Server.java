@@ -13,7 +13,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Server {
-    private static final Logger log = LogManager.getLogger();
+    private static final Logger log = LogManager.getLogger(Server.class);
     public static final String REGEX = "%!%";
     private final int port;
     private final AuthService authService;
