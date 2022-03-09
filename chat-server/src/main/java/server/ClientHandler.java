@@ -11,12 +11,10 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 
 public class ClientHandler {
-    private static final Logger logClient = LogManager.getLogger();
+    private static final Logger logClient = LogManager.getLogger(ClientHandler.class);
     private final long authTimeout;
     private Socket socket;
     private DataOutputStream out;

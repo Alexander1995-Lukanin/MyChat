@@ -2,10 +2,14 @@ package DatabaseChat;
 
 import error.ChangeNickExeption;
 import error.WrongCredentialsException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import server.Server;
 
 import java.sql.*;
 
 public class ClientsDatabaseService {
+    private static final Logger logDatabase = LogManager.getLogger(ClientsDatabaseService.class);
     private static final String DRIVER = "org.sqlite.JDBC";
     private static final String CONNECTION = "jdbc:sqlite:db/clients.db";
     private static final String GET_USERNAME = "select username from clients where login = ? and password = ?;";
@@ -75,7 +79,7 @@ public class ClientsDatabaseService {
     private void connect() throws ClassNotFoundException, SQLException {
         Class.forName(DRIVER);
         connection = DriverManager.getConnection(CONNECTION);
-        System.out.println("Connected to db!");
+        logDatabase.info("Connected to db!");
         getClientStatement = connection.prepareStatement(GET_USERNAME);
         changeNickStatement = connection.prepareStatement(CHANGE_USERNAME);
     }
@@ -85,7 +89,7 @@ public class ClientsDatabaseService {
             if (getClientStatement != null) getClientStatement.close();
             if (changeNickStatement != null) changeNickStatement.close();
             if (connection != null) connection.close();
-            System.out.println("Disconnected from db!");
+            logDatabase.info("Disconnected from db!");
         } catch (SQLException e) {
             e.printStackTrace();
         }
